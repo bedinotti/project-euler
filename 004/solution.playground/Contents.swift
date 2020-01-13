@@ -7,11 +7,20 @@ func isPalindrome(_ number: Int) -> Bool {
 }
 
 var largestProduct = 1
-for x in 100..<1000 {
-    for y in 100..<1000 {
+for x in (100..<1000).reversed() {
+    for y in (100..<1000).reversed() {
         let product = x * y
-        if isPalindrome(product) && product > largestProduct {
-            largestProduct = product
+        // Let's do the largest check first, to avoid the space allocation of the reversed string
+        // in isPalindrome.
+        if product > largestProduct {
+            if isPalindrome(product) {
+                largestProduct = product
+            }
+        } else {
+            // Since we're going high-to-low now, if we're not getting large products, they'll only
+            // get smaller from here on out. Break out of the inner loop and try the next highest
+            // number
+            break
         }
     }
 }
