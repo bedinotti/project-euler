@@ -4,6 +4,9 @@ function primesLessThan(upperBound)
     local foundPrimes = {}
 
     repeat
+      if highestNumber % 10000 == 0 then
+        print("Trying " .. highestNumber)
+      end
       local isPrime = true
 
       -- Try to divide it by a previously known prime
@@ -26,15 +29,11 @@ function primesLessThan(upperBound)
 end
 
 function primesIterator(upperBound)
-  local co = coroutine.create(primesLessThan(upperBound))
-  return function() 
-    local code, res = coroutine.resume(co)
-    return res
-  end
+  return coroutine.wrap(primesLessThan(upperBound))
 end
 
 local sum = 0
-for prime in primesIterator(10) do
+for prime in primesIterator(2000000) do
   sum = sum + prime
 end
 print(sum)
