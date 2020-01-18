@@ -1,30 +1,30 @@
 function primesLessThan(upperBound)
-  return function () 
-    local highestNumber = 2
-    local foundPrimes = {}
-
+  return function ()
+    local allNumbers = {}
+    for i = 2, upperBound do
+      allNumbers[#allNumbers + 1] = i
+    end
+    
+    local index = 1
     repeat
-      if highestNumber % 10000 == 0 then
-        print("Trying " .. highestNumber)
-      end
-      local isPrime = true
+      local nextPrime = allNumbers[index]
+      coroutine.yield(nextPrime)
 
-      -- Try to divide it by a previously known prime
-      for _, divisor in ipairs(foundPrimes) do
-        if highestNumber % divisor == 0 then
-          isPrime = false
-          break
+      local indexesToRemove = {}
+      for i = index + 1, #allNumbers do
+        local numberToCheck = allNumbers[i]
+        if numberToCheck % nextPrime == 0 then
+          table.insert(indexesToRemove, i)
         end
       end
 
-      -- If it's still prime, then we're good.
-      if isPrime then
-        foundPrimes[#foundPrimes + 1] = highestNumber
-        coroutine.yield(highestNumber)
+      for i = #indexesToRemove, 1, -1 do
+        local index = indexesToRemove[i]
+        table.remove(allNumbers, index)
       end
 
-      highestNumber = highestNumber + 1
-    until highestNumber > upperBound
+      index = index + 1
+    until index > #allNumbers
   end
 end
 
@@ -33,7 +33,8 @@ function primesIterator(upperBound)
 end
 
 local sum = 0
-for prime in primesIterator(2000000) do
+for prime in primesIterator(10) do
+  print(prime)
   sum = sum + prime
 end
 print(sum)
