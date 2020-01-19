@@ -1,4 +1,3 @@
-
 function primesLessThan(upperBound)
   return function ()
     local allNumbers = {}
@@ -12,11 +11,9 @@ function primesLessThan(upperBound)
       local nextPrime = allNumbers[index]
       coroutine.yield(nextPrime)
 
-      for i = index + 1, maxIndex do
-        local numberToCheck = allNumbers[i]
-        if numberToCheck ~= nil and numberToCheck % nextPrime == 0 then
-          allNumbers[i] = nil
-        end
+      for multiples = 2 * nextPrime, maxIndex, nextPrime do
+        local matchingIndex = multiples - 1
+        allNumbers[matchingIndex] = nil
       end
 
       repeat
