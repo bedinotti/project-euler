@@ -1,30 +1,31 @@
+
 function primesLessThan(upperBound)
   return function ()
     local allNumbers = {}
-    for i = 2, upperBound do
+    for i = 2, upperBound - 1 do
       allNumbers[#allNumbers + 1] = i
     end
-    
+    local maxIndex = #allNumbers
+
     local index = 1
     repeat
       local nextPrime = allNumbers[index]
       coroutine.yield(nextPrime)
 
-      local indexesToRemove = {}
-      for i = index + 1, #allNumbers do
+      for i = index + 1, maxIndex do
         local numberToCheck = allNumbers[i]
-        if numberToCheck % nextPrime == 0 then
-          table.insert(indexesToRemove, i)
+        if numberToCheck ~= nil and numberToCheck % nextPrime == 0 then
+          allNumbers[i] = nil
         end
       end
 
-      for i = #indexesToRemove, 1, -1 do
-        local index = indexesToRemove[i]
-        table.remove(allNumbers, index)
-      end
-
-      index = index + 1
-    until index > #allNumbers
+      repeat
+        index = index + 1
+        if index % 10000 == 0 then
+          print("At index " .. index)
+        end
+      until allNumbers[index] ~= nil or index > maxIndex
+    until index > maxIndex
   end
 end
 
@@ -33,8 +34,7 @@ function primesIterator(upperBound)
 end
 
 local sum = 0
-for prime in primesIterator(10) do
-  print(prime)
+for prime in primesIterator(2000000) do
   sum = sum + prime
 end
 print(sum)
