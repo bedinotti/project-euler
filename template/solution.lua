@@ -1,9 +1,11 @@
 -- run `method` with any passed argument. Print result to method and time to run.
 function benchmark(method, ...)
   local startTime = os.clock()
-  print(method(...))
+  local values = {method(...)}
   local endTime = os.clock()
   print(string.format("Solved in %.2fs", endTime - startTime))
+  print(table.unpack(values))
+  return table.unpack(values)
 end
 
 -- Example function to show off `benchmark`
