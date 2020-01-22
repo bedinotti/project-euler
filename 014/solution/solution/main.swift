@@ -17,8 +17,33 @@ func benchmark(method: () -> Void) {
     print(String(format: "Solved in %.2fs", end - start))
 }
 
-benchmark {
-    for i in 0..<1_000_000 {
-        print(i)
+func collatz(n: Int, length: Int = 0) -> Int {
+    if n == 1 {
+        return n + length
     }
+    
+    let out: Int
+    if n % 2 == 0 {
+        out = n / 2
+    } else  {
+        out = (3*n) + 1
+    }
+    return collatz(n: out, length: length + 1)
+}
+
+func solve() {
+    let result = (1..<1_000_000)
+        .map { ($0, collatz(n: $0)) }
+        .reduce((0,0)) { (lastTuple, thisTuple) -> (Int, Int) in
+            if lastTuple.1 > thisTuple.1 {
+                return lastTuple
+            }
+            return thisTuple
+        }
+    let (number, length) = result
+    print("\(number) produced a series of length \(length)")
+}
+
+benchmark {
+    solve()
 }
