@@ -23,11 +23,11 @@ function collatz(n, length)
   return collatz(n, length + 1)
 end
 
--- This is an alternate, faster implementation that memoizes the length of already computed inputs. Solves < 1s.
+-- This is an alternate, faster implementation that memoizes the length of already computed inputs.
 memo = {}
 memo[1] = 1
-function memoizedCollatz(n, length)
-  if memo[n] then return memo[n] + length end
+function memoizedCollatz(n)
+  if memo[n] then return memo[n] end
 
   local out = n
   if n % 2 == 0 then
@@ -36,7 +36,7 @@ function memoizedCollatz(n, length)
     out = (3 * n) + 1
   end
 
-  local result = memoizedCollatz(out, length + 1)
+  local result = 1 + memoizedCollatz(out)
   memo[n] = result
   return result
 end
