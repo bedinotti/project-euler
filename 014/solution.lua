@@ -8,19 +8,37 @@ function benchmark(method, ...)
   return table.unpack(values)
 end
 
--- Example function to show off `benchmark`
-function wasteTime(countTo)
-  print("called with " .. countTo)
-  local dict = {}
-  for i=1, countTo do
-    dict[i] = i
+-- Implement collatz with tail recursion
+function collatz(n, length)
+  if n == 1 then
+    return 1 + length
   end
 
-  while #dict > 0 do
-    table.remove(dict, 1)
+  if n % 2 == 0 then
+    n = n / 2
+  else
+    n = (3 * n) + 1
   end
-  return 
+
+  return collatz(n, length + 1)
 end
 
--- example of `benchmark`
-benchmark(wasteTime, 100000)
+function solveStartingNumber()
+  local longestChain = 0
+  local longestStartingNumber = 0
+  for i=1, 999999 do
+    local thisChain = collatz(i, 0)
+    if thisChain > longestChain then
+      longestChain = thisChain
+      longestStartingNumber = i
+    end
+
+    if i % 10000 then
+      print("Trying " .. i)
+    end
+  end
+  print(string.format("%d generates a chain of length %d", longestStartingNumber, longestChain))
+  return longestStartingNumber
+end
+
+benchmark(solveStartingNumber)
