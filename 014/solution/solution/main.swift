@@ -17,6 +17,7 @@ func benchmark(method: () -> Void) {
     print(String(format: "Solved in %.2fs", end - start))
 }
 
+// Tail recursive solution
 func collatz(n: Int, length: Int = 0) -> Int {
     if n == 1 {
         return n + length
@@ -31,9 +32,26 @@ func collatz(n: Int, length: Int = 0) -> Int {
     return collatz(n: out, length: length + 1)
 }
 
+// Memoized recursive solution
+var memo = [1:1]
+func memoCollatz(n: Int) -> Int {
+    if let value = memo[n] {
+        return value
+    }
+    let out: Int
+    if n % 2 == 0 {
+        out = n / 2
+    } else  {
+        out = (3*n) + 1
+    }
+    let result = 1 + memoCollatz(n: out)
+    memo[n] = result
+    return result
+}
+
 func solve() {
     let result = (1..<1_000_000)
-        .map { ($0, collatz(n: $0)) }
+        .map { ($0, memoCollatz(n: $0)) }
         .reduce((0,0)) { (lastTuple, thisTuple) -> (Int, Int) in
             if lastTuple.1 > thisTuple.1 {
                 return lastTuple
