@@ -13,10 +13,21 @@ function ping(...)
   print(string.format("%.4fs", diff), ...)
 end
 
--- Example function
-function solve(arg1)
-  return "solution"
+function solve(power)
+  local num 
+  -- Use faster bit shifting for smaller numbers that fit in an integer
+  if power < 63 then
+    num = 1 << power
+  else
+    num = 2 ^ power
+  end
+
+  local str = string.format("%.f", num)
+  local sum = 0
+  for i=1, #str do
+    sum = sum + tonumber(string.sub(str, i, i))
+  end
+  return sum
 end
 
--- example of `benchmark`
-benchmark(solve, 100000)
+benchmark(solve, 1000)
