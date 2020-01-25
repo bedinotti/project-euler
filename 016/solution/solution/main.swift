@@ -14,11 +14,15 @@ func benchmark(method: () -> Void) {
     let start = Date().timeIntervalSinceReferenceDate
     method()
     let end = Date().timeIntervalSinceReferenceDate
-    print(String(format: "Solved in %.2fs", end - start))
+    print(String(format: "Solved in %.4fs", end - start))
+}
+
+func digitSumFor(twoToThePowerOf n: Int) -> Int {
+    let number = pow(2.0, Double(n))
+    let string = String(format: "%.f", number)
+    return string.map { Int(String($0)) ?? 0 }.reduce(0, +)
 }
 
 benchmark {
-    for i in 0..<1_000_000 {
-        print(i)
-    }
+    print(digitSumFor(twoToThePowerOf: 1_000))
 }
