@@ -14,7 +14,7 @@ func benchmark(method: () -> Void) {
     let start = Date().timeIntervalSinceReferenceDate
     method()
     let end = Date().timeIntervalSinceReferenceDate
-    print(String(format: "Solved in %.2fs", end - start))
+    print(String(format: "Solved in %.4fs", end - start))
 }
 
 benchmark {
