@@ -1,5 +1,42 @@
 local helpers = loadfile("helpers.lua")()
 
+-- Define a max heap data structure
+-- For now, it's an array with insertion sort. 
+local Heap = {}
+function Heap:new (o)
+  o = o or {}
+  -- self.utility = self.utility or function (node) return node.value end
+  self.nodes = {}
+  self.__index = self
+  setmetatable(o, self)
+  return o
+end
+
+function Heap:push(node)
+  local value = node.value
+  local index = 1
+  while index <= #self.nodes and value > self.nodes[index].value do
+    index = index + 1
+  end
+  table.insert(self.nodes, index, node)
+end
+
+function Heap:pop()
+  print("pop", #self.nodes)
+  if #self.nodes == 0 then return nil end
+  local node = self.nodes[#self.nodes]
+  self.nodes[#self.nodes] = nil
+  return node
+end
+
+function Heap:isEmpty()
+  return #self.nodes == 0
+end
+
+-- Define a Node
+function newNode ()
+end
+
 -- Example solution function
 function parseTable(input)
   local rows = {}
@@ -14,29 +51,21 @@ function parseTable(input)
 end
 
 function solve(pyramidString)
-  local pyramid = parseTable(pyramidString)
+  -- local pyramid = parseTable(pyramidString)
   -- Start at the last row. Add each row above it.
-  local sums = pyramid[#pyramid]
+  local openSet = Heap:new()
+  -- openSet:push(pyramid[1][1])
 
-  print(table.unpack(sums))
+  openSet:push{value = 5}
+  openSet:push{value = 10}
+  openSet:push{value = 2}
 
-  local range = 1
-  -- For each row
-  for i = #pyramid-1, 1, -1 do
-    local newRow = pyramid[i]
-    -- Take each value
-    for j=1, #newRow do
-      -- And add it from its index, up to range
-      for k=0, range do
-        local index = j + k
-        sums[index] = sums[index] + newRow[j]
-      end
-    end
-
-    print(table.unpack(sums))
-  end
-
-  return math.max(table.unpack(sums))
+  print(openSet:pop().value)
+  print(openSet:pop().value)
+  print(openSet:pop().value)
+  print((openSet:pop() or {}).value)
+  
+  return 0
 end
 
 local easyInput = [[3
@@ -45,4 +74,4 @@ local easyInput = [[3
 8 5 9 3]]
 helpers.expect(23, solve, easyInput)
 
-helpers.benchmark(solve, 100000)
+-- helpers.benchmark(solve, 100000)
