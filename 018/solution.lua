@@ -1,7 +1,7 @@
 local helpers = loadfile("helpers.lua")()
 
 -- Define a max heap data structure
--- For now, it's an array with insertion sort. 
+-- For now, it's an array with insertion sort. Largest value at the end.
 local Heap = {}
 function Heap:new (o)
   o = o or {}
@@ -18,11 +18,14 @@ function Heap:push(node)
   while index <= #self.nodes and value > self.nodes[index].value do
     index = index + 1
   end
+  local depth = node.row
+  while index <= #self.nodes and value == self.nodes[index].value and depth > self.nodes[index].row do
+    index = index + 1
+  end
   table.insert(self.nodes, index, node)
 end
 
 function Heap:pop()
-  print("pop", #self.nodes)
   if #self.nodes == 0 then return nil end
   local node = self.nodes[#self.nodes]
   self.nodes[#self.nodes] = nil
@@ -43,27 +46,69 @@ function parseTable(input)
   for line in string.gmatch(input, "[%d ]+") do
     local column = {}
     for digits in string.gmatch(line, "%d+") do
-      column[#column + 1] = tonumber(digits)
+      column[#column + 1] = {
+        row = #rows + 1,
+        column = #column + 1,
+        children = {},
+        value = tonumber(digits)
+      }
     end
     rows[#rows + 1] = column
   end
-  return rows
+
+  for rowIndex=2, #rows do
+    local row = rows[rowIndex]
+    for col=1, #row do
+      local thisNode = rows[rowIndex][col]
+      local previousRowSameColumn = rows[rowIndex-1][col]
+      local previousRowPreviousColumn = rows[rowIndex-1][col-1]
+      if previousRowSameColumn then
+        table.insert(previousRowSameColumn.children, thisNode)
+      end
+
+      if previousRowPreviousColumn then
+        table.insert(previousRowPreviousColumn.children, thisNode)
+      end
+    end
+  end
+
+  return rows[1][1]
+end
+
+function traceAndAccumulate(fromNode)
+  local parent = fromNode["parent"]
+  print("Tracing")
+  local sum = fromNode.value
+  print(sum)
+  while parent do
+    sum = sum + parent.value
+    print("+" .. parent.value, sum)
+    parent = parent["parent"]
+  end
+  return sum
 end
 
 function solve(pyramidString)
-  -- local pyramid = parseTable(pyramidString)
+  local root = parseTable(pyramidString)
   -- Start at the last row. Add each row above it.
   local openSet = Heap:new()
-  -- openSet:push(pyramid[1][1])
+  openSet:push(root)
 
-  openSet:push{value = 5}
-  openSet:push{value = 10}
-  openSet:push{value = 2}
+  while not openSet:isEmpty() do
+    local nextNode = openSet:pop()
+    print("Popped" .. nextNode.value)
+    if #nextNode.children == 0 then
+      return traceAndAccumulate(nextNode)
+    end
 
-  print(openSet:pop().value)
-  print(openSet:pop().value)
-  print(openSet:pop().value)
-  print((openSet:pop() or {}).value)
+    for childIndex=1, #nextNode.children do
+      local child = nextNode.children[childIndex]
+      if not child["parent"] then
+        child["parent"] = nextNode
+      end
+      openSet:push(child)
+    end
+  end
   
   return 0
 end
