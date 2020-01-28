@@ -14,9 +14,7 @@ function parseTable(input)
   for line in string.gmatch(input, "[%d ]+") do
     local column = {}
     for digits in string.gmatch(line, "%d+") do
-      column[#column + 1] = {
-        value = tonumber(digits)
-      }
+      column[#column + 1] = tonumber(digits)
     end
     rows[#rows + 1] = column
   end
@@ -32,12 +30,11 @@ function solveWithBottomUpPruning(pyramidString)
       debug(row, col)
       local left = rows[row][col]
       local right = rows[row][col + 1]
-      local parent = rows[row-1][col]
-      parent.value = parent.value + math.max(left.value, right.value)
+      rows[row-1][col] = rows[row-1][col] + math.max(left, right)
     end
   end
 
-  return rows[1][1].value
+  return rows[1][1]
 end
 
 -- Run the tests, then solve with a benchmark.
