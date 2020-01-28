@@ -13,13 +13,13 @@ function Heap:new (o)
 end
 
 function Heap:push(node)
-  local value = node.value
+  local value = node.highestSum
   local index = 1
-  while index <= #self.nodes and value > self.nodes[index].value do
+  while index <= #self.nodes and value > self.nodes[index].highestSum do
     index = index + 1
   end
   local depth = node.row
-  while index <= #self.nodes and value == self.nodes[index].value and depth > self.nodes[index].row do
+  while index <= #self.nodes and value == self.nodes[index].highestSum and depth < self.nodes[index].row do
     index = index + 1
   end
   table.insert(self.nodes, index, node)
@@ -36,7 +36,7 @@ function Heap:isEmpty()
   return #self.nodes == 0
 end
 
-shouldPrintDebug = false
+shouldPrintDebug = true
 function debug(...)
   if shouldPrintDebug then
     print(...)
@@ -93,6 +93,7 @@ end
 
 function solve(pyramidString)
   local root = parseTable(pyramidString)
+  root.highestSum = root.value
   -- Start at the last row. Add each row above it.
   local openSet = Heap:new()
   openSet:push(root)
@@ -105,8 +106,10 @@ function solve(pyramidString)
 
     for childIndex=1, #nextNode.children do
       local child = nextNode.children[childIndex]
-      if not child["parent"] then
-        child["parent"] = nextNode
+      local sumToChild = nextNode.highestSum + child.value
+      if not child.parent or child.parent.highestSum < sumToChild then
+        child.highestSum = sumToChild
+        child.parent = nextNode
       end
       openSet:push(child)
     end
@@ -121,4 +124,20 @@ local easyInput = [[3
 8 5 9 3]]
 helpers.expect(23, solve, easyInput)
 
--- helpers.benchmark(solve, 100000)
+local challengeInput = [[75
+95 64
+17 47 82
+18 35 87 10
+20 04 82 47 65
+19 01 23 75 03 34
+88 02 77 73 07 63 67
+99 65 04 28 06 16 70 92
+41 41 26 56 83 40 80 70 33
+41 48 72 33 47 32 37 16 94 29
+53 71 44 65 25 43 91 52 97 51 14
+70 11 33 28 77 73 17 78 39 68 17 57
+91 71 52 38 17 14 91 43 58 50 27 29 48
+63 66 04 68 89 53 67 30 73 16 69 87 40 31
+04 62 98 27 23 09 70 98 73 93 38 53 60 04 23]]
+
+helpers.benchmark(solve, challengeInput)
