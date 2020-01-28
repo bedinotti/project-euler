@@ -36,8 +36,11 @@ function Heap:isEmpty()
   return #self.nodes == 0
 end
 
--- Define a Node
-function newNode ()
+shouldPrintDebug = false
+function debug(...)
+  if shouldPrintDebug then
+    print(...)
+  end
 end
 
 -- Example solution function
@@ -77,12 +80,12 @@ end
 
 function traceAndAccumulate(fromNode)
   local parent = fromNode["parent"]
-  print("Tracing")
+  debug("Tracing ..")
   local sum = fromNode.value
-  print(sum)
+  debug(sum)
   while parent do
     sum = sum + parent.value
-    print("+" .. parent.value, sum)
+    debug("+ " .. parent.value, sum)
     parent = parent["parent"]
   end
   return sum
@@ -96,7 +99,6 @@ function solve(pyramidString)
 
   while not openSet:isEmpty() do
     local nextNode = openSet:pop()
-    print("Popped" .. nextNode.value)
     if #nextNode.children == 0 then
       return traceAndAccumulate(nextNode)
     end
