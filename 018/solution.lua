@@ -13,13 +13,13 @@ function Heap:new (o)
 end
 
 function Heap:push(node)
-  local value = node.highestSum
+  local value = node.value
+  local depth = node.row
   local index = 1
-  while index <= #self.nodes and value > self.nodes[index].highestSum do
+  while index <= #self.nodes and value > self.nodes[index].value do
     index = index + 1
   end
-  local depth = node.row
-  while index <= #self.nodes and value == self.nodes[index].highestSum and depth < self.nodes[index].row do
+  while index <= #self.nodes and value == self.nodes[index].value and depth > self.nodes[index].row do
     index = index + 1
   end
   table.insert(self.nodes, index, node)
@@ -36,7 +36,7 @@ function Heap:isEmpty()
   return #self.nodes == 0
 end
 
-shouldPrintDebug = true
+shouldPrintDebug = false
 function debug(...)
   if shouldPrintDebug then
     print(...)
@@ -91,33 +91,33 @@ function traceAndAccumulate(fromNode)
   return sum
 end
 
-function solve(pyramidString)
+function solveWithAStarSearch(pyramidString)
   local root = parseTable(pyramidString)
-  root.highestSum = root.value
   -- Start at the last row. Add each row above it.
   local openSet = Heap:new()
   openSet:push(root)
 
   while not openSet:isEmpty() do
     local nextNode = openSet:pop()
+    debug("Popped " .. nextNode.value)
     if #nextNode.children == 0 then
       return traceAndAccumulate(nextNode)
     end
 
     for childIndex=1, #nextNode.children do
       local child = nextNode.children[childIndex]
-      local sumToChild = nextNode.highestSum + child.value
-      if not child.parent or child.parent.highestSum < sumToChild then
-        child.highestSum = sumToChild
+      if not child.parent then
+        debug("Most expensive parent to " .. child.value .. " is " .. nextNode.value) 
         child.parent = nextNode
+        openSet:push(child)
       end
-      openSet:push(child)
     end
   end
   
   return 0
 end
 
+local solve = solveWithAStarSearch
 local easyInput = [[3
 7 4
 2 4 6
