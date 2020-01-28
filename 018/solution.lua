@@ -1,5 +1,7 @@
 local helpers = loadfile("helpers.lua")()
 
+shouldPrintDebug = false
+
 -- Define a max heap data structure
 -- For now, it's an array with insertion sort. Largest value at the end.
 local Heap = {}
@@ -36,14 +38,13 @@ function Heap:isEmpty()
   return #self.nodes == 0
 end
 
-shouldPrintDebug = false
 function debug(...)
   if shouldPrintDebug then
     print(...)
   end
 end
 
--- Example solution function
+-- Take the input string and return a tree/table
 function parseTable(input)
   local rows = {}
   for line in string.gmatch(input, "[%d ]+") do
@@ -75,9 +76,10 @@ function parseTable(input)
     end
   end
 
-  return rows[1][1]
+  return rows
 end
 
+-- These are methods used for my failed A* search approach.
 function traceAndAccumulate(fromNode)
   local parent = fromNode["parent"]
   debug("Tracing ..")
@@ -92,7 +94,8 @@ function traceAndAccumulate(fromNode)
 end
 
 function solveWithAStarSearch(pyramidString)
-  local root = parseTable(pyramidString)
+  local tree = parseTable(pyramidString)
+  local root = tree[1][1]
   -- Start at the last row. Add each row above it.
   local openSet = Heap:new()
   openSet:push(root)
@@ -117,7 +120,24 @@ function solveWithAStarSearch(pyramidString)
   return 0
 end
 
-local solve = solveWithAStarSearch
+function solveWithBottomUpPruning(pyramidString)
+  local rows = parseTable(pyramidString)
+  for row = #rows, 2, -1 do
+    debug("Looping over", row)
+    for col = 1, #rows[row] - 1 do
+      debug(row, col)
+      local left = rows[row][col]
+      local right = rows[row][col + 1]
+      local parent = rows[row-1][col]
+      parent.value = parent.value + math.max(left.value, right.value)
+    end
+  end
+
+  return rows[1][1].value
+end
+
+-- local solve = solveWithAStarSearch
+local solve = solveWithBottomUpPruning
 local easyInput = [[3
 7 4
 2 4 6
