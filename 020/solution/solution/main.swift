@@ -17,8 +17,19 @@ func benchmark(method: () -> Void) {
     print(String(format: "Solved in %.4fs", end - start))
 }
 
+func factorial(n: Int) -> Double {
+    (1...n).map { Double($0) }.reduce(1, *)
+}
+
+func digitSum(number: Double) -> Int {
+    String(format: "%.f", number).compactMap { Int(String($0)) }.reduce(0, +)
+}
+
+func solve(n: Int) -> Int {
+    let product = factorial(n: n)
+    return digitSum(number: product)
+}
+
 benchmark {
-    for i in 0..<1_000_000 {
-        print(i)
-    }
+    print(solve(n: 100))
 }
