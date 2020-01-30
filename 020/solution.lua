@@ -21,6 +21,11 @@ function factorialDigitSum(n)
   return sumDigitsIn(product)
 end
 
-helpers.expect(27, factorialDigitSum, 10)
+-- helpers.expect(27, factorialDigitSum, 10)
 
-helpers.benchmark(factorialDigitSum, 100)
+-- for i=10, 100 do
+i = 25
+  local result = factorialDigitSum(i)
+  print(i, result)
+-- end
+-- helpers.benchmark(factorialDigitSum, 100)

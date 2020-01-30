@@ -17,6 +17,54 @@ func benchmark(method: () -> Void) {
     print(String(format: "Solved in %.4fs", end - start))
 }
 
+struct BigInt {
+    let value: String
+    var size: Int {
+        value.count
+    }
+
+    subscript(index: Int) -> Int {
+        // this is the reverse of the string. [0] is the ones digit, [1] is the tens digit, etc.
+        // out of bounds access is always 0.
+        guard index >= 0 else {
+            return 0
+        }
+        guard index < value.count else {
+            return 0
+        }
+        let vIndex = value.index(value.endIndex, offsetBy: -(index + 1))
+        return Int(String(value[vIndex]))!
+    }
+    
+    init(_ number: Int) {
+        value = String(format: "%d", number)
+    }
+
+    init(_ string: String) {
+        value = string.replacingOccurrences(of: "[^0-9]+", with: "", options: .regularExpression)
+    }
+    
+    static func +(lhs: BigInt, rhs: BigInt) -> BigInt {
+        var carry = 0
+        var sum = ""
+        for i in 0..<(max(lhs.size, rhs.size)) {
+            let digit = lhs[i] + rhs[i] + carry
+            if digit < 9 {
+                carry = 0
+                sum.append("\(digit)")
+            } else {
+                carry = digit / 10
+                sum.append("\(digit % 10)")
+            }
+        }
+        if carry > 0 {
+            sum.append("\(carry)")
+        }
+        return BigInt(String(sum.reversed()))
+    }
+}
+
+// This is the basic outline, and it would work if Int(or Double) was precise enough.
 func factorial(n: Int) -> Double {
     (1...n).map { Double($0) }.reduce(1, *)
 }
@@ -31,5 +79,10 @@ func solve(n: Int) -> Int {
 }
 
 benchmark {
-    print(solve(n: 100))
+    let x = BigInt(16)
+    print(x.value)
+    let y = BigInt(85)
+    print(y.value)
+    let z = x + y
+    print(z.value)
 }
