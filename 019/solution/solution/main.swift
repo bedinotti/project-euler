@@ -17,8 +17,40 @@ func benchmark(method: () -> Void) {
     print(String(format: "Solved in %.4fs", end - start))
 }
 
-benchmark {
-    for i in 0..<1_000_000 {
-        print(i)
+enum Month: CaseIterable {
+    case january, february, march, april, may, june, july, august, september, october, november, december
+
+    func daysFor(year: Int) -> Int {
+        let days: Int
+        switch self {
+        case .february where (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0):
+            days = 29
+        case .february:
+            days = 28
+        case .september, .april, .june, .november:
+            days = 30
+        default:
+            days = 31
+        }
+        return days
     }
+}
+
+func solve() -> Int {
+    let years = 1901...2000
+    var daysSoFar = 0
+    var firstSundays = 0
+    years.forEach { year in
+        Month.allCases.forEach { month in
+            if daysSoFar % 7 == 0 {
+                firstSundays += 1
+            }
+            daysSoFar += month.daysFor(year: year)
+        }
+    }
+    return firstSundays
+}
+
+benchmark {
+    print(solve())
 }
