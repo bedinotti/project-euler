@@ -62,6 +62,32 @@ struct BigInt {
         }
         return BigInt(String(sum.reversed()))
     }
+    
+    static func *(lhs: BigInt, rhs: BigInt) -> BigInt {
+        var terms = [BigInt]()
+        let longerNumber = lhs.size > rhs.size ? lhs : rhs
+        let smallerNumber = lhs.size > rhs.size ? rhs : lhs
+        for i in 0..<smallerNumber.size  {
+            var carry = 0
+            var term = String(repeating: "0", count: i)
+            for j in 0..<longerNumber.size {
+                let digit = longerNumber[j] * smallerNumber[i] + carry
+                if digit < 9 {
+                    carry = 0
+                    term.append("\(digit)")
+                } else {
+                    carry = digit / 10
+                    term.append("\(digit % 10)")
+                }
+            }
+            if carry > 0 {
+                term.append("\(carry)")
+            }
+            terms.append(BigInt(String(term.reversed())))
+        }
+        
+        return terms.reduce(BigInt(0), +)
+    }
 }
 
 // This is the basic outline, and it would work if Int(or Double) was precise enough.
@@ -79,10 +105,8 @@ func solve(n: Int) -> Int {
 }
 
 benchmark {
-    let x = BigInt(16)
-    print(x.value)
-    let y = BigInt(85)
-    print(y.value)
-    let z = x + y
+    let x = BigInt(187)
+    let y = BigInt(54)
+    let z = x * y
     print(z.value)
 }
