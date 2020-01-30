@@ -91,12 +91,12 @@ struct BigInt {
 }
 
 // This is the basic outline, and it would work if Int(or Double) was precise enough.
-func factorial(n: Int) -> Double {
-    (1...n).map { Double($0) }.reduce(1, *)
+func factorial(n: Int) -> BigInt {
+    (1...n).map { BigInt($0) }.reduce(BigInt(1), *)
 }
 
-func digitSum(number: Double) -> Int {
-    String(format: "%.f", number).compactMap { Int(String($0)) }.reduce(0, +)
+func digitSum(number: BigInt) -> Int {
+    number.value.compactMap { Int(String($0)) }.reduce(0, +)
 }
 
 func solve(n: Int) -> Int {
@@ -105,8 +105,6 @@ func solve(n: Int) -> Int {
 }
 
 benchmark {
-    let x = BigInt(187)
-    let y = BigInt(54)
-    let z = x * y
-    print(z.value)
+    let result = solve(n: 100)
+    print(result)
 }
