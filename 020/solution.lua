@@ -95,12 +95,12 @@ function factorial(n, product)
   if n == 1 then
     return product
   end
-  local bigN = BigInt.new(i)
+  local bigN = BigInt.new(n)
   return factorial(n - 1, product * bigN)
 end
 
 function sumDigitsIn(number)
-  local str = string.format("%.f", number)
+  local str = number.value
   local sum = 0
   for i=1, #str do
     sum = sum + tonumber(string.sub(str, i, i))
@@ -109,8 +109,8 @@ function sumDigitsIn(number)
 end
 
 function factorialDigitSum(n)
-  -- local product = factorial(n, BigInt.new(1))
-  -- return sumDigitsIn(product)
+  local product = factorial(n, BigInt.new(1))
+  return sumDigitsIn(product)
 end
 
 print("Equality tests for BigInt")
@@ -135,16 +135,9 @@ helpers.expect(BigInt.new(2), function () return BigInt.new(1) * BigInt.new(2) e
 helpers.expect(BigInt.new(30), function () return BigInt.new(5) * BigInt.new(6) end)
 helpers.expect(BigInt.new(603153), function () return BigInt.new(753) * BigInt.new(801) end)
 
--- Tests for the whole solution
--- helpers.expect(27, factorialDigitSum, 10)
--- helpers.expect(72, factorialDigitSum, 25)
--- helpers.expect(648, factorialDigitSum, 100)
+print("\nTests for factorial digit sum solution")
+helpers.expect(27, factorialDigitSum, 10)
+helpers.expect(72, factorialDigitSum, 25)
 
--- for i=10, 100 do
--- i = 25
-  -- local result = factorialDigitSum(i)
-  -- print(i, result)
--- end
-
-
--- helpers.benchmark(factorialDigitSum, 100)
+print()
+helpers.benchmark(factorialDigitSum, 100)
