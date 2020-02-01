@@ -47,9 +47,53 @@ function amicablePair(n)
     b = b + secondDivisors[i]
   end
 
-  if a ~= b then
-    return a, b
+  if a ~= 0 and b ~= 0 and a ~= b then
+    if a > b then
+      return a, b
+    else
+      return b, a
+    end
   end
+end
+
+-- Loop and solve
+function uniqueAmicableSum(upTo)
+  local amicableNumbers = {}
+  -- for i=1, upTo - 1 do
+  for i=1, math.huge do
+    local a, b = amicablePair(i)
+    -- if a or b then
+    --   print(a, b, i)
+    -- end
+
+    if a and a < upTo then
+      amicableNumbers[a] = true
+    end
+    if b and b < upTo then
+      amicableNumbers[b] = true
+    end
+
+    if a and b and b >= upTo and a >= upTo then
+      break
+    end
+  end
+
+  local sum = 0
+  for num, _ in pairs(amicableNumbers) do
+    sum = sum + num
+  end
+  return sum
+end
+
+function amicableSum(upTo)
+  local sum = 0
+  for i=1, upTo - 1 do
+    local a, b = amicablePair(i)
+    if a then
+      sum = sum + a + b
+    end
+  end
+  return sum
 end
 
 print("\nTesting array value equality")
@@ -60,5 +104,17 @@ helpers.expect(array{1, 2, 4, 5, 10, 11, 20, 22, 44, 55, 110}, divisors, 220)
 helpers.expect(array{1, 2, 4, 71, 142}, divisors, 284)
 
 print("\nTesting known amicable pairs")
-helpers.expect(array{}, function(x) return array(table.pack(amicablePair(x))) end, 1)
-helpers.expect(array{284, 220}, function(x) return array(table.pack(amicablePair(x))) end, 220)
+function packAmicablePair(x) return array(table.pack(amicablePair(x))) end
+helpers.expect(array{}, packAmicablePair, 1)
+helpers.expect(array{284, 220}, packAmicablePair, 220)
+helpers.expect(array{}, packAmicablePair, 1913)
+
+print("\nAmicable sum up to 10000 n")
+helpers.benchmark(amicableSum, 10000)
+
+print("\nUnique amicable sum of all amicable numbers < 10000")
+helpers.benchmark(uniqueAmicableSum, 10000)
+
+-- wrong answers
+-- 64091762
+-- 4570625
