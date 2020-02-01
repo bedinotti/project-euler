@@ -47,6 +47,10 @@ function amicablePair(n)
     b = b + secondDivisors[i]
   end
 
+  if b ~= n then
+    return nil
+  end
+
   if a ~= 0 and b ~= 0 and a ~= b then
     if a > b then
       return a, b
@@ -62,9 +66,6 @@ function uniqueAmicableSum(upTo)
   -- for i=1, upTo - 1 do
   for i=1, math.huge do
     local a, b = amicablePair(i)
-    -- if a or b then
-    --   print(a, b, i)
-    -- end
 
     if a and a < upTo then
       amicableNumbers[a] = true
