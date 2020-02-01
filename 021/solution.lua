@@ -34,6 +34,23 @@ function divisors(number)
   return result
 end
 
+-- Return two numbers if this number results in an amicable pair
+function amicablePair(n)
+  local firstDivisors = divisors(n)
+  local a = 0
+  for i=1, #firstDivisors do
+    a = a + firstDivisors[i]
+  end
+  local secondDivisors = divisors(a)
+  local b = 0
+  for i=1, #secondDivisors do
+    b = b + secondDivisors[i]
+  end
+
+  if a ~= b then
+    return a, b
+  end
+end
 
 print("\nTesting array value equality")
 helpers.expect(true, function() return array{1, 2} == array{1, 2} end)
@@ -42,3 +59,6 @@ print("\nTesting divisor calculation")
 helpers.expect(array{1, 2, 4, 5, 10, 11, 20, 22, 44, 55, 110}, divisors, 220)
 helpers.expect(array{1, 2, 4, 71, 142}, divisors, 284)
 
+print("\nTesting known amicable pairs")
+helpers.expect(array{}, function(x) return array(table.pack(amicablePair(x))) end, 1)
+helpers.expect(array{284, 220}, function(x) return array(table.pack(amicablePair(x))) end, 220)
