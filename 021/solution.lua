@@ -63,8 +63,7 @@ end
 -- Loop and solve
 function uniqueAmicableSum(upTo)
   local amicableNumbers = {}
-  -- for i=1, upTo - 1 do
-  for i=1, math.huge do
+  for i=1, upTo - 1 do
     local a, b = amicablePair(i)
 
     if a and a < upTo then
@@ -72,10 +71,6 @@ function uniqueAmicableSum(upTo)
     end
     if b and b < upTo then
       amicableNumbers[b] = true
-    end
-
-    if a and b and b >= upTo and a >= upTo then
-      break
     end
   end
 
@@ -109,9 +104,6 @@ function packAmicablePair(x) return array(table.pack(amicablePair(x))) end
 helpers.expect(array{}, packAmicablePair, 1)
 helpers.expect(array{284, 220}, packAmicablePair, 220)
 helpers.expect(array{}, packAmicablePair, 1913)
-
-print("\nAmicable sum up to 10000 n")
-helpers.benchmark(amicableSum, 10000)
 
 print("\nUnique amicable sum of all amicable numbers < 10000")
 helpers.benchmark(uniqueAmicableSum, 10000)
