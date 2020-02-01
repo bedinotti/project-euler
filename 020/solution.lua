@@ -2,7 +2,7 @@ local helpers = loadfile("helpers.lua")()
 
 -- define BigInt type
 local BigInt = {}
-local bigint_mt = {}
+local bigint_mt = { __index = BigInt }
 
 function BigInt.new(input)
   local bigInt = {}
@@ -17,8 +17,9 @@ function BigInt.new(input)
 end
 
 function BigInt:place(i)
-  local reverseIndex = #self.value - i
-  return tonumber(string.sub(self.value, reverseIndex, reverseIndex))
+  local reverseIndex = #self.value - i + 1
+  local result = tonumber(string.sub(self.value, reverseIndex, reverseIndex))
+  return result
 end
 
 function BigInt.add (lhs, rhs)
@@ -60,9 +61,17 @@ function factorialDigitSum(n)
   -- return sumDigitsIn(product)
 end
 
--- Test for bigInt
+print("Equality tests for BigInt")
 helpers.expect(true, function () return BigInt.new(1) == BigInt.new(1) end)
+
+print("Place tests for BigInt")
+helpers.expect(2, function () return BigInt.new(2):place(1) end)
+helpers.expect(2, function () return BigInt.new(654321):place(2) end)
+helpers.expect(6, function () return BigInt.new(654321):place(6) end)
+
+print("Add tests for BigInt")
 helpers.expect(2, function () return BigInt.new(1) + BigInt.new(1) end)
+helpers.expect(11, function () return BigInt.new(5) + BigInt.new(6) end)
 helpers.expect(4, function () return BigInt.new(2) + BigInt.new(2) end)
 
 -- Tests for the whole solution
