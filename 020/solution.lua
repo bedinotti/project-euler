@@ -23,8 +23,22 @@ function BigInt:place(i)
 end
 
 function BigInt.add (lhs, rhs)
-  -- This is a poor implementation
-  return lhs
+  local carry = 0
+  local sum = ""
+  for i=1, math.max(#lhs.value, #rhs.value) do
+    local digit = lhs:place(i) + rhs:place(i) + carry
+    if digit < 9 then
+      carry = 0
+      sum = sum .. string.format("%d", digit)
+    else
+      carry = math.floor(digit / 10)
+      sum = sum .. string.format("%d", digit % 10)
+    end
+  end
+  if carry > 0 then
+    sum = sum .. string.format("%d", carry)
+  end
+  return BigInt.new(sum)
 end
 bigint_mt.__add = BigInt.add
 
@@ -63,17 +77,19 @@ end
 
 print("Equality tests for BigInt")
 helpers.expect(true, function () return BigInt.new(1) == BigInt.new(1) end)
+helpers.expect(true, function () return BigInt.new(1) == BigInt.new("1") end)
 
-print("Place tests for BigInt")
+print("\nPlace tests for BigInt")
 helpers.expect(2, function () return BigInt.new(2):place(1) end)
 helpers.expect(2, function () return BigInt.new(654321):place(2) end)
 helpers.expect(6, function () return BigInt.new(654321):place(6) end)
+helpers.expect(6, function () return BigInt.new("654321"):place(6) end)
 helpers.expect(0, function () return BigInt.new(2):place(6) end)
 
-print("Add tests for BigInt")
-helpers.expect(2, function () return BigInt.new(1) + BigInt.new(1) end)
-helpers.expect(11, function () return BigInt.new(5) + BigInt.new(6) end)
-helpers.expect(4, function () return BigInt.new(2) + BigInt.new(2) end)
+print("\nAdd tests for BigInt")
+helpers.expect(BigInt.new(2), function () return BigInt.new(1) + BigInt.new(1) end)
+helpers.expect(BigInt.new(11), function () return BigInt.new(5) + BigInt.new(6) end)
+helpers.expect(BigInt.new(4), function () return BigInt.new(2) + BigInt.new(2) end)
 
 -- Tests for the whole solution
 -- helpers.expect(27, factorialDigitSum, 10)
