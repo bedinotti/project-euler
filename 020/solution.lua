@@ -18,7 +18,7 @@ end
 
 function BigInt:place(i)
   local reverseIndex = #self.value - i + 1
-  local result = tonumber(string.sub(self.value, reverseIndex, reverseIndex))
+  local result = tonumber(string.sub(self.value, reverseIndex, reverseIndex)) or 0
   return result
 end
 
@@ -68,6 +68,7 @@ print("Place tests for BigInt")
 helpers.expect(2, function () return BigInt.new(2):place(1) end)
 helpers.expect(2, function () return BigInt.new(654321):place(2) end)
 helpers.expect(6, function () return BigInt.new(654321):place(6) end)
+helpers.expect(0, function () return BigInt.new(2):place(6) end)
 
 print("Add tests for BigInt")
 helpers.expect(2, function () return BigInt.new(1) + BigInt.new(1) end)
