@@ -18,10 +18,7 @@ func benchmark(method: () -> Void) {
 }
 
 func divisors(of number: Int) -> [Int] {
-    if number == 1 {
-        return [1]
-    }
-    return (1..<number).filter { number % $0 == 0 }
+    return (1..<number / 2 + 1).filter { number % $0 == 0 }
 }
 
 func isAmicable(number: Int) -> Bool {
