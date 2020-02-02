@@ -26,7 +26,7 @@ end
 function divisors(number)
   local result = array{}
 
-  for i=1, number - 1 do
+  for i=1, number/2 + 1 do
     if number % i == 0 then
       result[#result + 1] = i
     end
