@@ -17,8 +17,25 @@ func benchmark(method: () -> Void) {
     print(String(format: "Solved in %.4fs", end - start))
 }
 
-benchmark {
-    for i in 0..<1_000_000 {
-        print(i)
+func divisors(of number: Int) -> [Int] {
+    if number == 1 {
+        return [1]
     }
+    return (1..<number).filter { number % $0 == 0 }
+}
+
+func isAmicable(number: Int) -> Bool {
+    let sumOfDivisors = divisors(of: number).reduce(0, +)
+    let secondSum = divisors(of: sumOfDivisors).reduce(0, +)
+    return secondSum == number && sumOfDivisors != secondSum
+}
+
+func uniqueAmicableSum(upTo limit: Int) -> Int {
+    (1..<limit)
+        .filter(isAmicable(number:))
+        .reduce(0, +)
+}
+
+benchmark {
+    print(uniqueAmicableSum(upTo: 10_000))
 }
