@@ -17,12 +17,21 @@ function loadList(filename)
   io.input(filename)
   local input = io.read("all")
   local names = {}
-  print(input)
-  for name in string.gmatch(input, "\"%a+\"") do
-    print("Found name:" .. name)
+  for name in string.gmatch(input, "\"(%a+)\"") do
     names[#names + 1] = name
   end
   return names
+end
+
+function accumulateNameScore(filename)
+  local names = loadList(filename)
+  table.sort(names)
+
+  local sum = 0
+  for i=1, #names do
+    sum = sum + valueOf(names[i], i)
+  end
+  return sum
 end
 
 print("\nTest the name evaluation function")
@@ -31,3 +40,5 @@ helpers.expect(49714, valueOf, "COLIN", 938)
 
 print("\nTest file loading")
 helpers.expect(7, function(f) return #loadList(f) end, "small_names.txt")
+
+helpers.benchmark(accumulateNameScore, "names.txt")
