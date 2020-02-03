@@ -10,15 +10,14 @@ import Foundation
 
 /// Measure how long it takes to execute the `method` closure
 /// - Parameter method: The method to benchmark.
-func benchmark(method: () -> Void) {
+func benchmark<T>(method: () -> T) {
     let start = Date().timeIntervalSinceReferenceDate
-    method()
+    let result = method()
     let end = Date().timeIntervalSinceReferenceDate
     print(String(format: "Solved in %.4fs", end - start))
+    print(result)
 }
 
 benchmark {
-    for i in 0..<1_000_000 {
-        print(i)
-    }
+    (0..<1_000_000).reduce(0, +)
 }
