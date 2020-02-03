@@ -18,6 +18,11 @@ func benchmark<T>(method: () -> T) {
     print(result)
 }
 
+// Take the file name in from the arguments list
+guard let fileName = ProcessInfo.processInfo.arguments.dropFirst().first else {
+    preconditionFailure("Usage: solution [filename]")
+}
+
 let capitalAOffset = 64
 func computeScore(forName name: String, position: Int = 1) -> Int {
     name.uppercased()
@@ -27,6 +32,25 @@ func computeScore(forName name: String, position: Int = 1) -> Int {
 
 assert(computeScore(forName: "COLIN") == 53)
 assert(computeScore(forName: "COLIN", position: 938) == 49714)
+
+func loadFile() -> [String] {
+    guard let fileData = FileManager.default.contents(atPath: fileName) else {
+        print("File is empty: \(fileName)")
+        return []
+    }
+    guard let string = String(data: fileData, encoding: .utf8) else {
+        print("File wasn't a text file: \(fileName)")
+        return []
+    }
+
+    let regex = try! NSRegularExpression(pattern: #"(\w+)"#, options: [])
+    return regex
+        .matches(in: string, options: [], range: NSRange(string.startIndex..., in: string))
+        .map { String(string[Range($0.range, in: string)!]) }
+}
+
+let names = loadFile()
+print(names)
 
 benchmark {
     computeScore(forName: "COLIN")

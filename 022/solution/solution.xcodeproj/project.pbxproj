@@ -25,8 +25,7 @@
 /* Begin PBXFileReference section */
 		8358D85B23D4E3FF00CB5C00 /* solution */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = solution; sourceTree = BUILT_PRODUCTS_DIR; };
 		8358D85E23D4E3FF00CB5C00 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		83EB938A23E7285A003D4031 /* names.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = names.txt; path = ../../names.txt; sourceTree = "<group>"; };
-		83EB938B23E7285A003D4031 /* small_names.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = small_names.txt; path = ../../small_names.txt; sourceTree = "<group>"; };
+		83EB938F23E7BD4F003D4031 /* small_names.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = small_names.txt; path = ../../small_names.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,8 +58,7 @@
 		8358D85D23D4E3FF00CB5C00 /* solution */ = {
 			isa = PBXGroup;
 			children = (
-				83EB938A23E7285A003D4031 /* names.txt */,
-				83EB938B23E7285A003D4031 /* small_names.txt */,
+				83EB938F23E7BD4F003D4031 /* small_names.txt */,
 				8358D85E23D4E3FF00CB5C00 /* main.swift */,
 			);
 			path = solution;
@@ -248,6 +246,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = R8S82GSG4X;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -259,6 +258,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = R8S82GSG4X;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
