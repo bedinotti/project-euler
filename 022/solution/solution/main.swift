@@ -10,7 +10,7 @@ import Foundation
 
 /// Measure how long it takes to execute the `method` closure
 /// - Parameter method: The method to benchmark.
-func benchmark<T>(method: () -> T) {
+func benchmarkAndPrint<T>(method: () -> T) {
     let start = Date().timeIntervalSinceReferenceDate
     let result = method()
     let end = Date().timeIntervalSinceReferenceDate
@@ -18,14 +18,21 @@ func benchmark<T>(method: () -> T) {
     print(result)
 }
 
+func benchmark(method: () -> Void) {
+    let start = Date().timeIntervalSinceReferenceDate
+    method()
+    let end = Date().timeIntervalSinceReferenceDate
+    print(String(format: "Solved in %.4fs", end - start))
+}
+
 // Take the file name in from the arguments list
 guard let fileName = ProcessInfo.processInfo.arguments.dropFirst().first else {
     preconditionFailure("Usage: solution [filename]")
 }
 
-let capitalAOffset = 64
 func computeScore(forName name: String, position: Int = 1) -> Int {
-    name.uppercased()
+    let capitalAOffset = 64
+    return name.uppercased()
         .unicodeScalars.map { Int($0.value) - capitalAOffset }
         .reduce(0, +) * position
 }
@@ -48,6 +55,14 @@ func loadFile() -> [String] {
         .matches(in: string, options: [], range: NSRange(string.startIndex..., in: string))
         .map { String(string[Range($0.range, in: string)!]) }
 }
+
+// I can't use benchmark{} to check this without causing a seg fault on compile.
+// So I'm timing it manually.
+let start = Date().timeIntervalSinceReferenceDate
+let sum = loadFile().sorted().enumerated().map { computeScore(forName: $0.1, position: $0.0 + 1) }.reduce(0, +)
+let end = Date().timeIntervalSinceReferenceDate
+print(String(format: "Solved in %.4fs", end - start))
+print(sum)
 
 // Both 'solve' methods fail to build. See [0] below for the stack trace when trying to compile this function.
 //
@@ -72,17 +87,8 @@ func loadFile() -> [String] {
 //    return scores.reduce(0, +)
 //}
 
-/// Implement _a_ method just to make the benchmark call compile
-func solve() -> Int {
-    0
-}
-
-benchmark {
-    solve()
-}
-
-
-/// # [0] Segmentation Fault 11
+/// # Failures
+/// ## [0] Segmentation Fault 11
 //Stack dump:
 //0.    Program arguments: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file /Users/chris/Projects/project-euler/022/solution/solution/main.swift -emit-module-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main~partial.swiftmodule -emit-module-doc-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main~partial.swiftdoc -serialize-diagnostics-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main.dia -emit-dependencies-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main.d -emit-reference-dependencies-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main.swiftdeps -target x86_64-apple-macos10.15 -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk -I /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Products/Debug -F /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Products/Debug -enable-testing -g -module-cache-path /Users/chris/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -swift-version 5 -enforce-exclusivity=checked -Onone -D DEBUG -serialize-debugging-options -Xcc -working-directory -Xcc /Users/chris/Projects/project-euler/022/solution -enable-anonymous-context-mangled-names -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/solution-generated-files.hmap -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/solution-own-target-headers.hmap -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/solution-all-target-headers.hmap -Xcc -iquote -Xcc /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/solution-project-headers.hmap -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Products/Debug/include -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/DerivedSources-normal/x86_64 -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/DerivedSources/x86_64 -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/DerivedSources -Xcc -DDEBUG=1 -module-name solution -o /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main.o -index-store-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Index/DataStore -index-system-modules
 //1.    While emitting SIL for 'shorthandSolve()' (at /Users/chris/Projects/project-euler/022/solution/solution/main.swift:52:1)
@@ -135,7 +141,7 @@ benchmark {
 
 
 
-/// # [1] Segmentation fault: 11
+/// ## [1] Segmentation fault: 11
 //Stack dump:
 //0.    Program arguments: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file /Users/chris/Projects/project-euler/022/solution/solution/main.swift -emit-module-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main~partial.swiftmodule -emit-module-doc-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main~partial.swiftdoc -serialize-diagnostics-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main.dia -emit-dependencies-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main.d -emit-reference-dependencies-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main.swiftdeps -target x86_64-apple-macos10.15 -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk -I /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Products/Debug -F /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Products/Debug -enable-testing -g -module-cache-path /Users/chris/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -swift-version 5 -enforce-exclusivity=checked -Onone -D DEBUG -serialize-debugging-options -Xcc -working-directory -Xcc /Users/chris/Projects/project-euler/022/solution -enable-anonymous-context-mangled-names -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/solution-generated-files.hmap -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/solution-own-target-headers.hmap -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/solution-all-target-headers.hmap -Xcc -iquote -Xcc /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/solution-project-headers.hmap -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Products/Debug/include -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/DerivedSources-normal/x86_64 -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/DerivedSources/x86_64 -Xcc -I/Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/DerivedSources -Xcc -DDEBUG=1 -module-name solution -o /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Build/Intermediates.noindex/solution.build/Debug/solution.build/Objects-normal/x86_64/main.o -index-store-path /Users/chris/Library/Developer/Xcode/DerivedData/solution-cueptxamsunhxoewoblxgjmxvgcx/Index/DataStore -index-system-modules
 //1.    While emitting SIL for 'solve()' (at /Users/chris/Projects/project-euler/022/solution/solution/main.swift:61:1)
