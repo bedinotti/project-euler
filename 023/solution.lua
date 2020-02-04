@@ -10,25 +10,31 @@ function testGroup(input)
 end
 
 -- Use slow O(n) approach from my memory
+divisorsMemo = {}
 function divisorsFor(number)
+  if divisorsMemo[number] ~= nil then return divisorsMemo[number] end
   local result = {}
-
   for i=1, number/2 + 1 do
     if number % i == 0 then
       result[#result + 1] = i
     end
   end
+  divisorsMemo[number] = result
   return result
 end
 
 -- Return true if a number is abundant
+abundantMemo = {}
 function isAbundant(number) 
+  if abundantMemo[number] ~= nil then return abundantMemo[number] end
   local divisors = divisorsFor(number)
   local sum = 0
   for i=1, #divisors do
     sum = sum + divisors[i]
   end
-  return sum > number
+  local result = sum > number
+  abundantMemo[number] = result
+  return result
 end
 
 -- return true if a number is the sum of two abundant numbers. 
@@ -50,8 +56,26 @@ function sumOfNotAbundantSumNumbers()
     if not isSumOfTwoAbundantNumbers(i) then
       sum = sum + i
     end
+
+    if i % 1000 == 0 then
+      helpers.ping(i .. " of " .. abundantSumsAreAllAtOrAbove)
+    end
   end
   return sum
+end
+
+-- Fast pasters
+-- Summing all pairs in {a b c d}
+--    becomes (a + b) + (a + c) + (a + d) + (b + c) + (b + d) + (c + d)
+--    becomes 3a + 3b + 3c + 3d
+--    becomes 3 (a + b + c + d)
+--    becomes (n-1) * (a + b + ... + n) 
+function sumOfAllPairs(pairList)
+  local sum = 0
+  for i = 1, #pairList do
+    sum = sum + pairList[i]
+  end
+  return sum * (#pairList - 1)
 end
 
 testGroup{
@@ -62,7 +86,14 @@ testGroup{
   }
 }
 
+testGroup{
+  title = "sumOfAllPairs",
+  tests = {
+    {12, sumOfAllPairs, {1, 2, 3}}
+  }
+}
+
 -- helpers.expect(false, isAbundant, 28)
 -- helpers.expect(true, isAbundant, 12)
 
--- helpers.benchmark(solve, 100000)
+helpers.benchmark(sumOfNotAbundantSumNumbers)
