@@ -1,3 +1,5 @@
+local helpers = loadfile("helpers.lua")()
+
 function primesLessThan(upperBound)
   return function ()
     local allNumbers = {}
@@ -18,9 +20,6 @@ function primesLessThan(upperBound)
 
       repeat
         index = index + 1
-        if index % 10000 == 0 then
-          print("At index " .. index)
-        end
       until allNumbers[index] ~= nil or index > maxIndex
     until index > maxIndex
   end
@@ -30,8 +29,12 @@ function primesIterator(upperBound)
   return coroutine.wrap(primesLessThan(upperBound))
 end
 
-local sum = 0
-for prime in primesIterator(2000000) do
-  sum = sum + prime
+function solve()
+  local sum = 0
+  for prime in primesIterator(2000000) do
+    sum = sum + prime
+  end
+  return sum
 end
-print(sum)
+
+helpers.benchmark(solve)
