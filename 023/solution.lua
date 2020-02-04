@@ -9,12 +9,12 @@ function testGroup(input)
   end
 end
 
--- Use slow O(n) approach from my memory
+-- Use slow O(n) approach from my memory, memoized
 divisorsMemo = {}
 function divisorsFor(number)
   if divisorsMemo[number] ~= nil then return divisorsMemo[number] end
   local result = {}
-  for i=1, number/2 + 1 do
+  for i=1, number/2 do
     if number % i == 0 then
       result[#result + 1] = i
     end
@@ -23,11 +23,12 @@ function divisorsFor(number)
   return result
 end
 
--- Return true if a number is abundant
+-- Return true if a number is abundant, memoized
 abundantMemo = {}
 function isAbundant(number) 
   if abundantMemo[number] ~= nil then return abundantMemo[number] end
   local divisors = divisorsFor(number)
+  -- print("divisors for " .. number, table.unpack(divisors))
   local sum = 0
   for i=1, #divisors do
     sum = sum + divisors[i]
@@ -39,9 +40,9 @@ end
 
 -- return true if a number is the sum of two abundant numbers. 
 function isSumOfTwoAbundantNumbers(number)
-  for i=1, number / 2 + 1 do
+  for i=1, math.floor(number / 2) + 1 do
     local biggerHalf = number - i
-    if isAbundant(i) and isAbundant(biggerHalf) then
+    if i ~= biggerHalf and isAbundant(i) and isAbundant(biggerHalf) then
       return true
     end
   end
@@ -51,13 +52,15 @@ end
 -- This is a terrible name, but suits the problem
 function sumOfNotAbundantSumNumbers()
   local abundantSumsAreAllAtOrAbove = 28123
+
   local sum = 0
-  for i=1, abundantSumsAreAllAtOrAbove - 1 do
+  for i=1, abundantSumsAreAllAtOrAbove do
     if not isSumOfTwoAbundantNumbers(i) then
+      -- print(i, "is not a sum of 2 abundant numbers")
       sum = sum + i
     end
 
-    if i % 1000 == 0 then
+    if i % 4000 == 0 then
       helpers.ping(i .. " of " .. abundantSumsAreAllAtOrAbove)
     end
   end
@@ -82,18 +85,32 @@ testGroup{
   title = "isAbundant",
   tests = {
     {false, isAbundant, 28},
-    {true, isAbundant, 12}
+    {true, isAbundant, 12},
+    {false, isAbundant, 11},
   }
 }
+for i=1, 11 do
+  helpers.expect(false, isAbundant, i)
+end
 
-testGroup{
-  title = "sumOfAllPairs",
-  tests = {
-    {12, sumOfAllPairs, {1, 2, 3}}
-  }
-}
+print("\nTesting isSumOfTwoAbundantNumbers")
+for i=28124, 28150 do
+  helpers.expect(true, isSumOfTwoAbundantNumbers, i)
+end
+
+-- testGroup{
+--   title = "sumOfAllPairs",
+--   tests = {
+--     {12, sumOfAllPairs, {1, 2, 3}}
+--   }
+-- }
 
 -- helpers.expect(false, isAbundant, 28)
 -- helpers.expect(true, isAbundant, 12)
 
 helpers.benchmark(sumOfNotAbundantSumNumbers)
+
+-- wrong answers
+-- 4112735
+-- 4140858
+-- 4179935
