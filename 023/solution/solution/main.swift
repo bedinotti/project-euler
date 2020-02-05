@@ -18,6 +18,36 @@ func benchmark<T>(method: () -> T) {
     print(result)
 }
 
+func divisors(number: Int) -> [Int] {
+    if number == 1 || number == 2 {
+        return [1]
+    }
+    return (1...number/2).filter { number % $0 == 0 }
+}
+
+func isAbundant(number: Int) -> Bool {
+    divisors(number: number).reduce(0, +) > number
+}
+
+func sumOfNonAbundantSumPairs() -> Int {
+    let pairsAreAbove = 28123
+    var numbersToSum = Set((1...pairsAreAbove))
+    
+    let abundantNumbers = (1...pairsAreAbove).filter(isAbundant(number:))
+    // Remove all numbers that are the sum of two abundant numbers.
+    abundantNumbers.enumerated().forEach { offset, number in
+        abundantNumbers[offset...].forEach { secondNumber in
+            numbersToSum.remove(number + secondNumber)
+        }
+    }
+    
+    return numbersToSum.reduce(0, +)
+}
+
+assert(isAbundant(number: 28) == false)
+assert(isAbundant(number: 12) == true)
+assert(isAbundant(number: 11) == false)
+
 benchmark {
-    (0..<1_000_000).reduce(0, +)
+    sumOfNonAbundantSumPairs()
 }
