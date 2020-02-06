@@ -26,16 +26,14 @@ func orderedPermutationsOf(digits: [String]) -> [String] {
         return digits
     }
     
-    let results = digits.enumerated().map { offset, digit -> [String] in
+    var results = [String]()
+    digits.enumerated().forEach { (arg) in
+        let (offset, digit) = arg
         var localDigits = digits
         localDigits.remove(at: offset)
-        return orderedPermutationsOf(digits: localDigits).map { "\(digit)\($0)" }
+        results.append(contentsOf: orderedPermutationsOf(digits: localDigits).map { "\(digit)\($0)" })
     }
-    return results.reduce([]) { result, permutations -> [String] in
-        var result = result
-        result.append(contentsOf: permutations)
-        return result
-    }
+    return results
 }
 benchmark {
     orderedPermutationsOf(digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[1_000_000 - 1]
