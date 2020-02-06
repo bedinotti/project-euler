@@ -18,6 +18,25 @@ func benchmark<T>(method: () -> T) {
     print(result)
 }
 
+func orderedPermutationsOf(digits: [Int]) -> [String] {
+    orderedPermutationsOf(digits: digits.map(String.init))
+}
+func orderedPermutationsOf(digits: [String]) -> [String] {
+    guard digits.count > 1 else {
+        return digits
+    }
+    
+    let results = digits.enumerated().map { offset, digit -> [String] in
+        var localDigits = digits
+        localDigits.remove(at: offset)
+        return orderedPermutationsOf(digits: localDigits).map { "\(digit)\($0)" }
+    }
+    return results.reduce([]) { result, permutations -> [String] in
+        var result = result
+        result.append(contentsOf: permutations)
+        return result
+    }
+}
 benchmark {
-    (0..<1_000_000).reduce(0, +)
+    orderedPermutationsOf(digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[1_000_000 - 1]
 }
