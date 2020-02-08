@@ -20,10 +20,10 @@ function recurringLengthFor(denominator)
   for powerOfTen = 1, 20 do
     local nextDigit = ((10 ^ powerOfTen) / denominator) % 10
     if nextDigit == 0 then
-      return #shortestRepeatingString(digits)
+      return #(shortestRepeatingString(digits) or "")
     end
     digits = digits .. string.format("%.f", nextDigit)
-    repeatCount = #shortestRepeatingString(digits)
+    repeatCount = #(shortestRepeatingString(digits) or "")
     if repeatCount > 0 then
       return repeatCount
     end
@@ -38,7 +38,7 @@ function shortestRepeatingString(inString)
   for startIndex = 1, #inString do
     local midpoint = math.floor((startIndex + #inString) / 2)
     local stringToTest = string.sub(inString, startIndex, midpoint)
-    if stringToTest == string.sub(inString, midpoint, #inString) then 
+    if stringToTest == string.sub(inString, midpoint+1, #inString) then 
       -- try to find a smaller string
       return shortestRepeatingString(stringToTest) or stringToTest
     end
@@ -73,7 +73,6 @@ testGroup {
 
 testGroup {
   "recurringLengthFor",
-  skip = true,
   tests = {
     {0, recurringLengthFor, 2},
     {1, recurringLengthFor, 3},
@@ -85,10 +84,9 @@ testGroup {
 
 testGroup {
   "longestRecurringDenominator",
-  skip = true,
   tests = {
     {7, longestRecurringDenominator, 10},
   }
 }
 
--- helpers.benchmark(solve, 100000)
+helpers.benchmark(longestRecurringDenominator, 1000)
