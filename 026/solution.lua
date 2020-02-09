@@ -1,23 +1,25 @@
 local helpers = loadfile("helpers.lua")()
+local lib = loadfile("library.lua")()
 
--- Test a group of inputs & outputs. 
-function testGroup(input)
-  local title = input[1] or input.title or ""
-  if input.skip then
-    print(string.format("\nSkipping %s...", title))
-    return
-  else
-    print(string.format("\nTesting %s...", title))
-  end
-  for i=1, #(input.tests or {}) do
-    helpers.expect(table.unpack(input.tests[i]))
-  end
+local BigInt = lib.BigInt
+local testGroup = helpers.testGroup
+
+-- Add division to BigInt
+function BigInt.divide (lhs, rhs)
+  return BigInt.new(1)
 end
+lib.bigint_mt.__div = BigInt.divide
+
+-- Add printable display to BigInt
+function BigInt.tostring (bigint)
+  return bigint.value or "unknown"
+end
+lib.bigint_mt.__tostring = BigInt.tostring
 
 function recurringLengthFor(denominator)
   local digits = ""
   local repeatCount = 0
-  for powerOfTen = 1, 20 do
+  for powerOfTen = 1, math.huge do
     local nextDigit = ((10 ^ powerOfTen) / denominator) % 10
     if nextDigit == 0 then
       return #(shortestRepeatingString(digits) or "")
@@ -60,7 +62,19 @@ function longestRecurringDenominator(upTo)
 end
 
 testGroup {
+  "BigInt division",
+  tests = {
+    {BigInt.new(1),            function (d) return BigInt.new(1) / d end, BigInt.new(1)},
+    {BigInt.new("0.(3)"),      function (d) return BigInt.new(1) / d end, BigInt.new(3)},
+    {BigInt.new("0.25"),       function (d) return BigInt.new(1) / d end, BigInt.new(4)},
+    {BigInt.new("0.1(6)"),     function (d) return BigInt.new(1) / d end, BigInt.new(6)},
+    {BigInt.new("0.(142857)"), function (d) return BigInt.new(1) / d end, BigInt.new(7)}
+  }
+}
+
+testGroup {
   "shortestRepeatingString",
+  skip = true,
   tests = {
     {nil, shortestRepeatingString, "5"},
     {"5", shortestRepeatingString, "55"},
@@ -73,6 +87,7 @@ testGroup {
 
 testGroup {
   "recurringLengthFor",
+  skip = true,
   tests = {
     {0, recurringLengthFor, 2},
     {1, recurringLengthFor, 3},
@@ -84,9 +99,11 @@ testGroup {
 
 testGroup {
   "longestRecurringDenominator",
+  skip = true,
   tests = {
     {7, longestRecurringDenominator, 10},
   }
 }
 
 helpers.benchmark(longestRecurringDenominator, 1000)
+-- wrong answers: 73
