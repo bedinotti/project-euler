@@ -5,9 +5,47 @@ local BigInt = lib.BigInt
 local testGroup = helpers.testGroup
 
 -- Add division to BigInt
-function BigInt.divide (lhs, rhs)
-  return BigInt.new(1)
+function BigInt.divide (numerator, denominator)
+  -- Assumptions: numerator & denominator are whole numbers. Denominator can fit into an int.
+  local denominator = tonumber(denominator.value)
+  local carry = ""
+  local carriesSeen = {}
+  local result = ""
+  local decimalPlace = nil
+
+  local i = 1
+  while not carriesSeen[carry] and i < 10 do -- carry ~= "0" and 
+    carriesSeen[carry] = i
+    -- loop until we have nothing to carry, 
+    local digit = numerator.value:sub(i, i)
+    -- print("digit for ", numerator.value, digit)
+    if digit == "" and decimalPlace == nil then
+      -- print("setting decimal plae")
+      decimalPlace = i
+    end
+    if digit == "" then
+      digit = "0"
+    end
+    local numeratorDigit = tonumber(carry .. digit) -- "1"
+    -- print("numeratorDigit", numeratorDigit)
+    local dividesEvenly = math.floor(numeratorDigit / denominator)  -- 1 / 2 => 0
+    local dividesRemainder = numeratorDigit % denominator -- 1 % 2 => 1
+
+    carry = tostring(dividesRemainder) -- Is this only ever one digit?
+      if decimalPlace == i then
+        result = result .. "." .. dividesEvenly
+      else 
+        result = result .. dividesEvenly
+      end
+    -- print("Result is now " .. result)
+    i = i + 1
+  end
+
+  -- todo: add the decimal point back in at `decimalPlace`
+  -- print("missing decimal place at", decimalPlace)
+  return BigInt.new(result:sub(1, -2))
 end
+
 lib.bigint_mt.__div = BigInt.divide
 
 -- Add printable display to BigInt
@@ -64,11 +102,12 @@ end
 testGroup {
   "BigInt division",
   tests = {
-    {BigInt.new(1),            function (d) return BigInt.new(1) / d end, BigInt.new(1)},
-    {BigInt.new("0.(3)"),      function (d) return BigInt.new(1) / d end, BigInt.new(3)},
+    -- {BigInt.new(1),            function (d) return BigInt.new(1) / d end, BigInt.new(1)},
+    {BigInt.new("0.5"),            function (d) return BigInt.new(1) / d end, BigInt.new(2)},
+    -- {BigInt.new("0.(3)"),      function (d) return BigInt.new(1) / d end, BigInt.new(3)},
     {BigInt.new("0.25"),       function (d) return BigInt.new(1) / d end, BigInt.new(4)},
-    {BigInt.new("0.1(6)"),     function (d) return BigInt.new(1) / d end, BigInt.new(6)},
-    {BigInt.new("0.(142857)"), function (d) return BigInt.new(1) / d end, BigInt.new(7)}
+    -- {BigInt.new("0.1(6)"),     function (d) return BigInt.new(1) / d end, BigInt.new(6)},
+    -- {BigInt.new("0.(142857)"), function (d) return BigInt.new(1) / d end, BigInt.new(7)}
   }
 }
 
@@ -105,5 +144,5 @@ testGroup {
   }
 }
 
-helpers.benchmark(longestRecurringDenominator, 1000)
+-- helpers.benchmark(longestRecurringDenominator, 1000)
 -- wrong answers: 73
