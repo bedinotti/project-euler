@@ -18,18 +18,15 @@ function BigInt.divide (numerator, denominator)
     carriesSeen[carry] = i
     -- loop until we have nothing to carry, 
     local digit = numerator.value:sub(i, i)
-    -- print("digit for ", numerator.value, digit)
     if digit == "" and decimalPlace == nil then
-      -- print("setting decimal plae")
       decimalPlace = i
     end
     if digit == "" then
       digit = "0"
     end
-    local numeratorDigit = tonumber(carry .. digit) -- "1"
-    -- print("numeratorDigit", numeratorDigit)
-    local dividesEvenly = math.floor(numeratorDigit / denominator)  -- 1 / 2 => 0
-    local dividesRemainder = numeratorDigit % denominator -- 1 % 2 => 1
+    local numeratorDigit = tonumber(carry .. digit)
+    local dividesEvenly = math.floor(numeratorDigit / denominator)
+    local dividesRemainder = numeratorDigit % denominator
 
     carry = tostring(dividesRemainder) -- Is this only ever one digit?
       if decimalPlace == i then
@@ -37,13 +34,23 @@ function BigInt.divide (numerator, denominator)
       else 
         result = result .. dividesEvenly
       end
-    -- print("Result is now " .. result)
     i = i + 1
   end
 
-  -- todo: add the decimal point back in at `decimalPlace`
-  -- print("missing decimal place at", decimalPlace)
-  return BigInt.new(result:sub(1, -2))
+  if carriesSeen[carry] then
+    local startIndex = carriesSeen[carry]
+    local beforeParen = result:sub(1, startIndex)
+    local endParen = result:sub(startIndex + 1, -1)
+    result = beforeParen .. "(" .. endParen .. ")"
+  end
+
+  -- Correct for (0) and 1.
+  result = result:gsub("%(0%)", "")
+  if result:sub(-1, -1) == "." then
+    result = result:sub(1, -2)
+  end
+
+  return BigInt.new(result)
 end
 
 lib.bigint_mt.__div = BigInt.divide
@@ -102,12 +109,12 @@ end
 testGroup {
   "BigInt division",
   tests = {
-    -- {BigInt.new(1),            function (d) return BigInt.new(1) / d end, BigInt.new(1)},
+    {BigInt.new(1),            function (d) return BigInt.new(1) / d end, BigInt.new(1)},
     {BigInt.new("0.5"),            function (d) return BigInt.new(1) / d end, BigInt.new(2)},
-    -- {BigInt.new("0.(3)"),      function (d) return BigInt.new(1) / d end, BigInt.new(3)},
+    {BigInt.new("0.(3)"),      function (d) return BigInt.new(1) / d end, BigInt.new(3)},
     {BigInt.new("0.25"),       function (d) return BigInt.new(1) / d end, BigInt.new(4)},
-    -- {BigInt.new("0.1(6)"),     function (d) return BigInt.new(1) / d end, BigInt.new(6)},
-    -- {BigInt.new("0.(142857)"), function (d) return BigInt.new(1) / d end, BigInt.new(7)}
+    {BigInt.new("0.1(6)"),     function (d) return BigInt.new(1) / d end, BigInt.new(6)},
+    {BigInt.new("0.(142857)"), function (d) return BigInt.new(1) / d end, BigInt.new(7)}
   }
 }
 
