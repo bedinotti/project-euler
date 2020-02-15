@@ -1,4 +1,5 @@
 local helpers = loadfile("helpers.lua")()
+local lib = loadfile("library.lua")()
 
 -- Example solution function
 function solve(arg1)
