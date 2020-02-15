@@ -16,7 +16,7 @@ function BigInt.divide (numerator, denominator)
   local i = 1
   while not carriesSeen[carry] and i < 10 do -- carry ~= "0" and 
     carriesSeen[carry] = i
-    -- loop until we have nothing to carry, 
+    -- loop until we have nothing to carry, or we've seen this carry before.
     local digit = numerator.value:sub(i, i)
     if digit == "" and decimalPlace == nil then
       decimalPlace = i
@@ -29,11 +29,11 @@ function BigInt.divide (numerator, denominator)
     local dividesRemainder = numeratorDigit % denominator
 
     carry = tostring(dividesRemainder) -- Is this only ever one digit?
-      if decimalPlace == i then
-        result = result .. "." .. dividesEvenly
-      else 
-        result = result .. dividesEvenly
-      end
+    if decimalPlace == i then
+      result = result .. "." .. dividesEvenly
+    else 
+      result = result .. dividesEvenly
+    end
     i = i + 1
   end
 
@@ -97,8 +97,16 @@ function longestRecurringDenominator(upTo)
   local longestRecurringLength = 0
   local longestDenominator = 0
   for d=2, upTo do
-    local length = recurringLengthFor(d)
+    local result = BigInt.new(1) / BigInt.new(d)
+    local repeatingBits = result.value:match("%((%d+)%)")
+    if repeatingBits ~= nil then
+      print("1 / " .. d, result.value)
+    end
+    repeatingBits = repeatingBits or ""
+
+    local length = #repeatingBits
     if length > longestRecurringLength then
+      print(string.format("Found: %s is longer than %s: %s", d, longestDenominator, result.value))
       longestRecurringLength = length
       longestDenominator = d
     end
@@ -145,11 +153,10 @@ testGroup {
 
 testGroup {
   "longestRecurringDenominator",
-  skip = true,
   tests = {
     {7, longestRecurringDenominator, 10},
   }
 }
 
--- helpers.benchmark(longestRecurringDenominator, 1000)
--- wrong answers: 73
+helpers.benchmark(longestRecurringDenominator, 1000)
+-- wrong answers: 73, 219, 657, 803
