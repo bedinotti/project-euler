@@ -99,14 +99,10 @@ function longestRecurringDenominator(upTo)
   for d=2, upTo do
     local result = BigInt.new(1) / BigInt.new(d)
     local repeatingBits = result.value:match("%((%d+)%)")
-    if repeatingBits ~= nil then
-      print("1 / " .. d, result.value)
-    end
     repeatingBits = repeatingBits or ""
 
     local length = #repeatingBits
     if length > longestRecurringLength then
-      print(string.format("Found: %s is longer than %s: %s", d, longestDenominator, result.value))
       longestRecurringLength = length
       longestDenominator = d
     end
