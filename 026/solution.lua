@@ -14,7 +14,7 @@ function BigInt.divide (numerator, denominator)
   local decimalPlace = nil
 
   local i = 1
-  while not carriesSeen[carry] and i < 10 do -- carry ~= "0" and 
+  while not carriesSeen[carry] do -- carry ~= "0" and 
     carriesSeen[carry] = i
     -- loop until we have nothing to carry, or we've seen this carry before.
     local digit = numerator.value:sub(i, i)
