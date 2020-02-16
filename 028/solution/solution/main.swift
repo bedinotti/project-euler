@@ -18,6 +18,28 @@ func benchmark<T>(method: () -> T) {
     print(result)
 }
 
+func diagonalSum(sideLength: Int) -> Int {
+    var lastSeenCell = 0
+    var sum = 0
+    
+    for side in stride(from: 1, to: sideLength+1, by: 2) {
+        if side == 1 {
+            lastSeenCell = 1
+            sum = sum + lastSeenCell
+        } else {
+            (0..<4).forEach { _ in
+                lastSeenCell += side - 1
+                sum += lastSeenCell
+            }
+        }
+    }
+    return sum
+}
+
+assert(diagonalSum(sideLength: 1) == 1)
+assert(diagonalSum(sideLength: 3) == 25)
+assert(diagonalSum(sideLength: 5) == 101)
+
 benchmark {
-    (0..<1_000_000).reduce(0, +)
+    diagonalSum(sideLength: 1001)
 }
