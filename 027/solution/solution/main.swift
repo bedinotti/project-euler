@@ -19,6 +19,7 @@ func benchmark<T>(method: () -> T) {
 }
 
 func isPrime(_ n: Int) -> Bool {
+    let n = abs(n)
     if n == 1 {
         return false
     }
