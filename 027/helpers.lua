@@ -8,6 +8,10 @@ local function benchmark(method, ...)
 end
 
 local function ping(...)
+  if startTime == nil then
+    print("You an only ping during a benchmark run")
+    return
+  end
   local diff = os.clock() - startTime
   print(string.format("%.4fs", diff), ...)
 end
