@@ -4,6 +4,7 @@ local lib = loadfile("library.lua")()
 -- Prime test by trial division
 prime_memo = {}
 function isPrime(n)
+  n = math.abs(n)
   if prime_memo[n] ~= nil then
     return prime_memo[n]
   end
