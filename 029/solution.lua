@@ -5,11 +5,27 @@ local BigInt = lib.BigInt
 
 -- Let's add power to BigInt
 function BigInt.pow (num, exp)
-  local product = BigInt.new(1)
   -- this is a partial implementation, assuming the exp fits in the size of an int.
-  for i=1, tonumber(exp.value) do
+  exp = tonumber(exp.value)
+  if exp == 0 then
+    return BigInt.new(1)
+  elseif exp == 1 then
+    return num
+  end
+
+  local product = num
+  -- x ^ y can be expressed as x ^ (2 ^ n + m)
+  local n = math.floor(math.log(exp) / math.log(2))
+  local m = exp - 2 ^ n
+
+  for i=1, n do
+    product = product * product
+  end
+
+  for i=1, m do
     product = product * num
   end
+
   return product
 end
 lib.bigint_mt.__pow = BigInt.pow
