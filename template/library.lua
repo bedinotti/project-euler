@@ -17,6 +17,9 @@ function BigInt.new(input)
 end
 
 function BigInt:place(i)
+  if i > #self.value or i < 0 then
+    return 0
+  end
   local reverseIndex = #self.value - i + 1
   local result = tonumber(string.sub(self.value, reverseIndex, reverseIndex)) or 0
   return result
