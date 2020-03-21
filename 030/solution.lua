@@ -58,20 +58,63 @@ helpers.testGroup {
   }
 }
 
+function printArray(array) 
+  local str = ""
+  for i=1, #array do
+    str = str .. "," .. array[i]
+  end
+  print(str)
+end
+
+function digitIncrementSequence(initialTable)
+  return coroutine.wrap(function ()
+    while true do
+      local lastSubNineIndex = #initialTable
+      while initialTable[lastSubNineIndex] == 9 and lastSubNineIndex > 0 do
+        lastSubNineIndex = lastSubNineIndex - 1
+      end
+
+      if lastSubNineIndex == 0 then
+        coroutine.yield(nil)
+        return
+      end
+
+      local newValue = initialTable[lastSubNineIndex] + 1
+      while lastSubNineIndex <= #initialTable do
+        initialTable[lastSubNineIndex] = newValue
+        lastSubNineIndex = lastSubNineIndex + 1
+      end
+      coroutine.yield(initialTable)
+    end
+  end)
+end
+
+function digitSequence(power)
+  return coroutine.wrap(function ()
+    local maxDigits = findMaxDigits(power)
+    local digits = {0, 0}
+    while #digits <= maxDigits do
+      coroutine.yield(digits)
+
+      for incrementedDigits in digitIncrementSequence(digits) do
+        coroutine.yield(incrementedDigits)
+      end
+
+      -- Reset to an aray of 1s, one larger than before. 
+      for i=1, #digits do
+        digits[i] = 0
+      end
+      digits[#digits+1] = 0
+    end
+  end)
+end
+
 -- Solve it.
 function digitPowerSum(power)
-  local maxDigits = findMaxDigits(power)
-
   local sum = 0
 
-  local digits = {0, 0}
-  while #digits <= maxDigits do
-
-    -- Reset to an aray of 1s, one larger than before. 
-    for i=1, #digits do
-      digits[i] = 1
-    end
-    digits[#digits+1] = 1
+  for digits in digitSequence(power) do
+    printArray(digits)
   end
 
   return sum
