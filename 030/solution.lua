@@ -1,11 +1,16 @@
 local helpers = loadfile("helpers.lua")()
 local lib = loadfile("library.lua")()
 
-function isSumOfPowers(digitArray, power)
+function productOf(digitArray, power)
   local sum = 0
   for i=1, #digitArray do
     sum = sum + digitArray[i] ^ power
   end
+  return sum
+end
+
+function isSumOfPowers(digitArray, power)
+  local sum = productOf(digitArray, power)
   local sumString = string.format("%.f", sum)
   local sumDigits = {}
   for i=1, #sumString do
@@ -114,7 +119,10 @@ function digitPowerSum(power)
   local sum = 0
 
   for digits in digitSequence(power) do
-    printArray(digits)
+    if isSumOfPowers(digits, power) then
+      local number = productOf(digits, power)
+      sum = sum + number
+    end
   end
 
   return sum
@@ -127,4 +135,4 @@ helpers.testGroup {
   }
 }
 
--- helpers.benchmark(digitPowerSum, 4)
+helpers.benchmark(digitPowerSum, 5)
