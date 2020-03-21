@@ -1,7 +1,6 @@
 local helpers = loadfile("helpers.lua")()
 local lib = loadfile("library.lua")()
 
-
 function isSumOfPowers(digitArray, power)
   local sum = 0
   for i=1, #digitArray do
@@ -37,13 +36,27 @@ helpers.testGroup {
     {true, isSumOfPowers, {8, 2, 0, 8}, 4},
     {true, isSumOfPowers, {9, 4, 7, 4}, 4},
     {false, isSumOfPowers, {1, 2, 3, 4}, 4},
+    {false, isSumOfPowers, {1, 0, 0, 0}, 4}
   }
 }
 
-function findMaxDigits(power) 
-  -- figure this out.
-  return 4
+function findMaxDigits(power)
+  local maxDigits = 0
+  local sum = 0
+  repeat
+    maxDigits = maxDigits + 1
+    sum = maxDigits * (9 ^ power)
+  until #string.format("%.f", sum) <= maxDigits
+  return maxDigits
 end
+
+helpers.testGroup {
+  "findMaxDigits",
+  tests = {
+    {1, findMaxDigits, 1},
+    {5, findMaxDigits, 4}
+  }
+}
 
 -- Solve it.
 function digitPowerSum(power)
