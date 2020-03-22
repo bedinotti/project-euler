@@ -18,6 +18,33 @@ func benchmark<T>(method: () -> T) {
     print(result)
 }
 
+func isPandigitalProduct(x: Int, y: Int) -> Bool {
+    let product = x * y
+    let allDigitsString = String(format: "%d%d%d", x, y, product)
+    let digits = allDigitsString.map { Int(String($0))! }.sorted()
+
+    return digits == [1, 2, 3, 4, 5, 6, 7, 8, 9]
+}
+
+assert(isPandigitalProduct(x: 39, y: 186))
+assert(!isPandigitalProduct(x: 78, y: 93))
+
+func sumAllPandigitalProducts() -> Int {
+    let guessedMax = 9876 / 2
+    
+    var products = Set<Int>()
+    
+    (1...guessedMax).forEach { x in
+        (1...guessedMax).forEach { y in
+            if isPandigitalProduct(x: x, y: y) {
+                products.insert(x * y)
+            }
+        }
+    }
+    
+    return products.reduce(0, +)
+}
+
 benchmark {
-    (0..<1_000_000).reduce(0, +)
+    sumAllPandigitalProducts()
 }
