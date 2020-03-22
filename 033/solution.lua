@@ -3,7 +3,6 @@ local lib = loadfile("library.lua")()
 
 -- Recycled from solution 21
 -- More metatable fun to make the tests more readable
--- By default, tables are tested by pointer-equality. This makes them test by value equality.
 local array_mt = {}
 
 function array(input) 
