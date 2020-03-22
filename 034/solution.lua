@@ -47,4 +47,30 @@ helpers.testGroup {
   }
 }
 
--- helpers.benchmark(solve, 100000)
+function allCuriousSum() 
+  -- figure out an upper bound guess
+  local digitMax = factorial(9)
+  local guessedMax = 1000
+
+  for i=1, math.huge do
+    local value = i * digitMax
+    local string = tostring(value)
+    if #string <= i then
+      guessedMax = value
+      break
+    end
+  end
+  print("guessed max:" .. guessedMax)
+
+  local sum = 0
+  for i=10, guessedMax do
+    if isCurious(i) then
+      print("Found curious number:" .. i)
+      sum = sum + i
+    end
+  end
+
+  return sum
+end
+
+helpers.benchmark(allCuriousSum)
