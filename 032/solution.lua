@@ -25,14 +25,22 @@ helpers.testGroup {
 }
 
 function multiplicands()
-  -- this is dumb and slow. But also boring. And easy to write
+  -- This is the source of the time complexity of this problem. If I were more clever about
+  -- how to choose numbers so they didn't share digits, then this would run way faster.
 
   -- 2 is the smallest multiplier that gives us the right digits 4 digits + 1 digit + 4 digits = 9 digits total.
-  local guessedMax = 9999 / 2
-  return coroutine.wrap(function () 
+  local guessedMax = 9876 / 2
+
+  -- cache x's so we can avoid yielding x,y as y,x later
+  local previousXs = {}
+
+  return coroutine.wrap(function ()
     for x=1, guessedMax do
+      previousXs[x] = true
       for y=1, guessedMax do
-        coroutine.yield(x, y)
+        if not previousXs[y] then
+          coroutine.yield(x, y)
+        end
       end
     end
   end)
