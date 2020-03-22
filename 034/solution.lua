@@ -23,7 +23,19 @@ helpers.testGroup {
 }
 
 function isCurious(number)
-  return false
+  -- must have 2 digits to be curious
+  if number < 10 then return false end
+
+  local unusedDigits = number
+  local sum = 0
+
+  while unusedDigits > 0 do
+    local digit = unusedDigits % 10
+    sum = sum + factorial(digit)
+    unusedDigits = math.floor(unusedDigits / 10)
+  end
+
+  return sum == number
 end
 
 helpers.testGroup {
