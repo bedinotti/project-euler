@@ -91,6 +91,36 @@ assert(!isCurious(fraction: Fraction(numerator: 12, denominator: 34)))
 assert(!isCurious(fraction: Fraction(numerator: 12, denominator: 21)))
 assert(!isCurious(fraction: Fraction(numerator: 9, denominator: 98)))
 
+func solve() -> Int {
+    var curiousFractions = [Fraction]()
+    
+    (10...98).forEach { numerator in
+        (numerator+1...99).forEach { denominator in
+            let fraction = Fraction(numerator: numerator, denominator: denominator)
+            if isCurious(fraction: fraction) {
+                curiousFractions.append(fraction)
+            }
+        }
+    }
+    
+    let fraction = curiousFractions.reduce(Fraction(numerator: 1, denominator: 1)) { accumulation, fraction in
+        Fraction(numerator: accumulation.numerator * fraction.numerator,
+                 denominator: accumulation.denominator * fraction.denominator)
+    }
+    
+    var numerator = fraction.numerator
+    var denominator = fraction.denominator
+    var test = 2
+    while test <= numerator {
+        while numerator % test == 0 && denominator % test == 0 {
+            numerator /= test
+            denominator /= test
+        }
+        test += 1
+    }
+    return denominator
+}
+
 benchmark {
-    true
+    solve()
 }
