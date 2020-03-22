@@ -115,12 +115,31 @@ function findTheFour()
   for x=10, 99 do
     for y=x+1, 99 do
       if isCuriousFraction(x, y) then
-        curiousFractions[#curiousFractions + 1] = array{x,y}
-        print(x .. "/" .. y .. " is curious")
+        curiousFractions[#curiousFractions + 1] = {numerator = x, denominator = y}
       end
     end
   end
-
+  return curiousFractions
 end
 
-helpers.benchmark(findTheFour)
+function solve()
+  local fractions = findTheFour()
+  local numerator = 1
+  local denominator = 1
+  for i=1, #fractions do
+    local fraction = fractions[i]
+    numerator = numerator * fraction.numerator
+    denominator = denominator * fraction.denominator
+  end
+
+  for i=2, numerator do
+    while numerator % i == 0 and denominator % i == 0 do
+      numerator = numerator / i
+      denominator = denominator / i
+    end
+  end
+
+  return denominator
+end
+
+helpers.benchmark(solve)
