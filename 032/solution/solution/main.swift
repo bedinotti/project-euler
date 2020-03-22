@@ -33,10 +33,12 @@ func sumAllPandigitalProducts() -> Int {
     let guessedMax = 9876 / 2
     
     var products = Set<Int>()
-    
+    var seenXValues = Set<Int>()
     (1...guessedMax).forEach { x in
+        seenXValues.insert(x)
         (1...guessedMax).forEach { y in
-            if isPandigitalProduct(x: x, y: y) {
+            if !seenXValues.contains(y)
+                && isPandigitalProduct(x: x, y: y) {
                 products.insert(x * y)
             }
         }
