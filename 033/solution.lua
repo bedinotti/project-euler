@@ -84,6 +84,10 @@ function isCuriousFraction(numerator, denominator)
     end
   end
 
+  if #numeratorDigits == 0 or #denominatorDigits == 0 then
+    return false
+  end
+
   local reducedValue = tonumber(table.concat(numeratorDigits)) / tonumber(table.concat(denominatorDigits))
 
   return foundDigitInCommon and reducedValue == value
@@ -106,4 +110,17 @@ helpers.testGroup {
   }
 }
 
--- helpers.benchmark(solve, 100000)
+function findTheFour()
+  local curiousFractions = array{}
+  for x=10, 99 do
+    for y=x+1, 99 do
+      if isCuriousFraction(x, y) then
+        curiousFractions[#curiousFractions + 1] = array{x,y}
+        print(x .. "/" .. y .. " is curious")
+      end
+    end
+  end
+
+end
+
+helpers.benchmark(findTheFour)
