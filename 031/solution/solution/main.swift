@@ -18,6 +18,29 @@ func benchmark<T>(method: () -> T) {
     print(result)
 }
 
+func permutationCount(from values: [Int], targetValue: Int) -> Int {
+    guard targetValue != 0 || !values.isEmpty else {
+        return 1
+    }
+    guard targetValue >= 0 else {
+        return 0
+    }
+    
+    var count = 0
+    var remainingValues = values
+    if let value = remainingValues.popLast() {
+        let maxMultiple = Int(ceil(Double(targetValue) / Double(value)))
+        count = (0...maxMultiple)
+            .map { permutationCount(from: remainingValues, targetValue: targetValue - value * $0) }
+            .reduce(0, +)
+    }
+    return count
+}
+
+assert(permutationCount(from: [50], targetValue: 50) == 1)
+assert(permutationCount(from: [50, 25], targetValue: 50) == 2)
+assert(permutationCount(from: [50, 25], targetValue: 100) == 3)
+
 benchmark {
-    (0..<1_000_000).reduce(0, +)
+    permutationCount(from: [1, 2, 5, 10, 20, 50, 100, 200], targetValue: 200)
 }
