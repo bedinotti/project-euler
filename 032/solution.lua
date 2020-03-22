@@ -25,7 +25,10 @@ helpers.testGroup {
 }
 
 function multiplicands()
-  local guessedMax = 1000
+  -- this is dumb and slow. But also boring. And easy to write
+
+  -- 2 is the smallest multiplier that gives us the right digits 4 digits + 1 digit + 4 digits = 9 digits total.
+  local guessedMax = 9999 / 2
   return coroutine.wrap(function () 
     for x=1, guessedMax do
       for y=1, guessedMax do
@@ -37,12 +40,8 @@ end
 
 -- Example solution function
 function sumAllPandigitalProducts()
-  local availableDigits = {1, 2, 3, 4, 5, 6, 7, 8, 9}
-  local guessedMax = 987654321
-
   local products = {}
   -- choose X, choose Y
-  -- this is dumb and slow. But also boring. And easy to write
   for x, y in multiplicands() do
     if isPandigitalProduct(x, y) then
       print(x .. "*" .. y .. " is pandigital!")
