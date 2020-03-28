@@ -17,7 +17,32 @@ helpers.testGroup {
   tests = {
     {true, isPrime, 2},
     {true, isPrime, 97},
+    {true, isPrime, 19},
     {false, isPrime, 91}
+  }
+}
+
+function isCircularPrime(n)
+  if isPrime(n) then
+    local nString = tostring(n)
+    for remainingRotations = #nString - 1, 1, -1 do
+      nString = string.sub(nString, #nString, #nString) .. string.sub(nString, 1, #nString - 1, #nString - 1)
+      if not isPrime(tonumber(nString)) then
+        return false
+      end
+    end
+    return true
+  else
+    return false
+  end
+end
+
+helpers.testGroup{
+  "isCircularPrime",
+  tests = {
+    {true, isCircularPrime, 2},
+    {true, isCircularPrime, 17},
+    {false, isCircularPrime, 19}
   }
 }
 
