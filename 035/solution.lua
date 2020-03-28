@@ -47,8 +47,21 @@ helpers.testGroup{
 }
 
 -- Example solution function
-function solve(arg1)
-  return "solution"
+function circularPrimesBelow(maxN)
+  local count = 0
+  for i=2, maxN - 1 do
+    if isCircularPrime(i) then
+      count = count + 1
+    end
+  end
+  return count
 end
 
-helpers.benchmark(solve, 100000)
+helpers.testGroup{
+  "circularPrimesBelow",
+  tests = {
+    {13, circularPrimesBelow, 100}
+  }
+}
+
+helpers.benchmark(circularPrimesBelow, 1000000)
