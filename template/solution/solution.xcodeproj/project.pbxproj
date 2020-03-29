@@ -89,7 +89,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = "Big Nerd Ranch";
 				TargetAttributes = {
 					8358D85A23D4E3FF00CB5C00 = {
@@ -243,6 +243,7 @@
 		8358D86323D4E3FF00CB5C00 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R8S82GSG4X;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -254,6 +255,7 @@
 		8358D86423D4E3FF00CB5C00 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R8S82GSG4X;
 				ENABLE_HARDENED_RUNTIME = YES;
